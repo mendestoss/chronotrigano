@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRIGANO MDC - Écran d'Avancement Ligne 6</title>
+  <style>
+    :root {
+      --trigano-red: #E30613;
+      --bg-dark: #0a0e17;
+      --card-dark: #141c2e;
+      --border-dark: #232f48;
+      --text-white: #ffffff;
+      --text-gray: #94a3b8;
+      --accent-orange: #f59e0b;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-white); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; user-select: none; }
+
+    /* HEADER GRAND FORMAT */
+    header { background-color: #060910; padding: 1.5vh 2vw; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5vh solid var(--trigano-red); }
+    .brand { display: flex; align-items: center; gap: 1.5vw; }
+    .logo-box { background-color: var(--trigano-red); color: white; font-weight: 900; font-size: 3vh; padding: 0.8vh 1.5vw; border-radius: 0.5vh; letter-spacing: 0.2vw; }
+    .site-title { font-size: 3.5vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+    .status-badge { background: #1e293b; padding: 1vh 1.5vw; border-radius: 3vh; font-size: 2.5vh; font-weight: 700; border: 0.2vh solid var(--border-dark); }
+    .status-badge.active { color: var(--accent-green); border-color: var(--accent-green); }
+    .status-badge.off { color: var(--accent-orange); border-color: var(--accent-orange); }
+
+    .gear-btn { background: transparent; border: 0.2vh solid var(--border-dark); color: var(--text-gray); font-size: 4vh; padding: 1vh 1.5vw; border-radius: 1vh; cursor: pointer; }
+    .gear-btn:hover { color: white; border-color: var(--trigano-red); background: var(--card-dark); }
+
+    /* CENTRE (CHRONO) ULTRA MASSIF */
+    main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2vh 2vw; text-align: center; }
+    .title-avancement { font-size: 4vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.1vw; margin-bottom: 1vh; }
+    
+    .timer-display { 
+      font-size: min(35vh, 18vw); /* S'adapte parfaitement à l'écran sans déborder */
+      font-weight: 900; 
+      font-family: 'Courier New', monospace; 
+      letter-spacing: -0.5vw; 
+      line-height: 0.85; 
+      margin: 2vh 0; 
+      text-shadow: 0 0 4vh rgba(227, 6, 19, 0.5); 
+      transition: color 0.3s ease; 
+    }
+    .timer-display.paused { color: var(--accent-orange) !important; text-shadow: 0 0 4vh rgba(245, 158, 11, 0.4); }
+    .timer-display.off-shift { color: #64748b !important; text-shadow: none; }
+    
+    .objective-text { font-size: 3.5vh; font-weight: 700; margin-bottom: 3vh; color: var(--text-gray); }
+
+    .action-buttons { display: flex; gap: 2vw; }
+    .btn { padding: 1.5vh 2.5vw; font-size: 2.8vh; font-weight: 700; border-radius: 1vh; cursor: pointer; border: none; }
+    .btn-pause { background-color: var(--accent-orange); color: #000; }
+    .btn-cycle { background-color: transparent; color: white; border: 0.3vh solid var(--trigano-red); }
+    .btn-cycle:hover { background-color: var(--trigano-red); box-shadow: 0 0 3vh rgba(227, 6, 19, 0.5); }
+    .btn-reset-week { background-color: #334155; color: white; border: 0.2vh solid var(--border-dark); }
+    .btn-reset-week:hover { background-color: #475569; border-color: var(--text-gray); }
+
+    /* PIED DE PAGE (KPIS ET CONSIGNES) AGRANDIS */
+    footer { display: grid; grid-template-columns: 1fr 2.6fr 1fr; gap: 1.5vw; padding: 2vh 2vw; background-color: #060910; border-top: 0.2vh solid var(--border-dark); }
+    .panel { background-color: var(--card-dark); border: 0.2vh solid var(--border-dark); border-left: 0.8vh solid var(--trigano-red); border-radius: 1.5vh; padding: 1.5vh 2vw; display: flex; flex-direction: column; justify-content: center; }
+    .panel-title { font-size: 2vh; font-weight: 800; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.1vw; margin-bottom: 0.5vh; }
+    
+    .current-time { font-size: 7vh; font-weight: 800; font-family: 'Courier New', monospace; line-height: 1; }
+    .current-date { font-size: 2.5vh; font-weight: 600; color: var(--text-gray); text-transform: capitalize; margin-top: 0.5vh; }
+    
+    .consigne-text { font-size: 4.5vh; font-weight: 800; margin-top: 1vh; color: #f8fafc; line-height: 1.2; }
+
+    .weekly-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1vw; margin-top: 1vh; }
+    .kpi-box { background: var(--bg-dark); padding: 1.5vh 1vw; border-radius: 1vh; border: 0.2vh solid var(--border-dark); text-align: center; }
+    .kpi-label { font-size: 2.2vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-bottom: 0.5vh; letter-spacing: 0.05vw; }
+    .kpi-value { font-size: 8vh; font-weight: 900; line-height: 1; }
+    .kpi-target { color: var(--accent-blue); }
+    .kpi-done { color: var(--accent-green); }
+    .kpi-todo { color: var(--accent-orange); }
+
+    .progress-bar-container { width: 100%; background: var(--bg-dark); height: 3vh; border-radius: 1.5vh; margin-top: 1.5vh; overflow: hidden; border: 0.2vh solid var(--border-dark); }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--trigano-red), var(--accent-green)); width: 0%; transition: width 0.4s ease; }
+
+    /* MODAL DE PARAMÈTRES (Aussi agrandie pour la lisibilité sur TV) */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal { background: var(--card-dark); border: 0.3vh solid var(--trigano-red); padding: 4vh 3vw; border-radius: 1.5vh; width: 60vw; max-width: 900px; max-height: 90vh; overflow-y: auto; }
+    .modal h2 { margin-bottom: 3vh; border-bottom: 0.2vh solid var(--border-dark); padding-bottom: 1.5vh; font-size: 3.5vh; }
+    .form-group { margin-bottom: 2vh; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; }
+    .form-group label { display: block; font-size: 2.2vh; color: var(--text-gray); margin-bottom: 1vh; font-weight: 600; }
+    .form-group input { width: 100%; padding: 1.5vh 2vw; background: var(--bg-dark); border: 0.2vh solid var(--border-dark); color: white; border-radius: 1vh; font-size: 2.5vh; }
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 1.5vw; margin-top: 4vh; }
+    .btn-save { background: var(--trigano-red); color: white; border: none; padding: 1.5vh 3vw; border-radius: 1vh; cursor: pointer; font-weight: 700; font-size: 2.5vh; }
+    .btn-cancel { background: transparent; color: var(--text-gray); border: 0.2vh solid var(--border-dark); padding: 1.5vh 3vw; border-radius: 1vh; cursor: pointer; font-size: 2.5vh; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="logo-box">TRIGANO</div>
+      <div class="site-title" id="line-title">Ligne 6 — Trigano MDC</div>
+      <div class="status-badge active" id="production-status">EN PRODUCTION</div>
+    </div>
+    <button class="gear-btn" onclick="openSettings()" title="Paramètres">⚙</button>
+  </header>
+
+  <main>
+    <div class="title-avancement" id="avancement-status-title">Prochain avancement dans :</div>
+    <div class="timer-display" id="countdown">02:10:00</div>
+    <div class="objective-text" id="objective-label">Objectif de cycle : 210 minutes</div>
+
+    <div class="action-buttons">
+      <button class="btn btn-pause" id="pause-btn" onclick="togglePause()">Pause</button>
+      <button class="btn btn-cycle" onclick="manualResetCycle()">Fin de cycle (+1 Mobil)</button>
+      <button class="btn btn-reset-week" onclick="resetWeeklyCounter()" title="Remise à zéro des réalisés de la semaine">🔄 RAZ Semaine</button>
+    </div>
+  </main>
+
+  <footer>
+    <div class="panel">
+      <div class="panel-title">HEURE ACTUELLE</div>
+      <div class="current-time" id="clock-time">00:00:00</div>
+      <div class="current-date" id="clock-date">--</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">OBJECTIFS SEMAINE (MOBIL-HOMES)</div>
+      <div class="weekly-grid">
+        <div class="kpi-box">
+          <div class="kpi-label">À produire</div>
+          <div class="kpi-value kpi-target" id="kpi-target">20</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Déjà réalisés</div>
+          <div class="kpi-value kpi-done" id="kpi-done">0</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Reste à faire</div>
+          <div class="kpi-value kpi-todo" id="kpi-todo">20</div>
+        </div>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">INFO / CONSIGNES</div>
+      <div class="consigne-text" id="consigne-display">Merci de porter vos EPI</div>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <h2>⚙️ Configuration Ligne & Production</h2>
+      
+      <div class="form-group">
+        <label for="input-title">Nom de la Ligne / Titre</label>
+        <input type="text" id="input-title" value="Ligne 6 — Trigano MDC">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="input-weekly-target">Objectif Semaine (Nombre de Mobils)</label>
+          <input type="number" id="input-weekly-target" value="20" min="0">
+        </div>
+        <div class="form-group">
+          <label for="input-weekly-done">Déjà Réalisés cette semaine</label>
+          <input type="number" id="input-weekly-done" value="0" min="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-objective">Objectif Temps de Cycle (en minutes)</label>
+        <input type="number" id="input-objective" value="210" min="1">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="input-m-start">Début Matin</label>
+          <input type="time" id="input-m-start" value="07:30">
+        </div>
+        <div class="form-group">
+          <label for="input-m-end">Fin Matin (Pause Midi)</label>
+          <input type="time" id="input-m-end" value="12:00">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="input-a-start">Reprise Après-midi</label>
+          <input type="time" id="input-a-start" value="13:00">
+        </div>
+        <div class="form-group">
+          <label for="input-a-end">Fin Après-midi (Fin Shift)</label>
+          <input type="time" id="input-a-end" value="17:00">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="input-consigne">Consigne / Message défilant</label>
+        <input type="text" id="input-consigne" value="Merci de porter vos EPI">
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeSettings()">Annuler</button>
+        <button class="btn-save" onclick="saveSettings()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let targetMinutes = 210;
+    let totalSeconds = targetMinutes * 60;
+    let isManualPaused = false;
+    let alarmPlayed = false;
+
+    let weeklyTarget = 20;
+    let weeklyDone = 0;
+
+    let mStart = "07:30";
+    let mEnd = "12:00";
+    let aStart = "13:00";
+    let aEnd = "17:00";
+
+    const countdownEl = document.getElementById('countdown');
+    const objectiveLabelEl = document.getElementById('objective-label');
+    const pauseBtn = document.getElementById('pause-btn');
+    const consigneEl = document.getElementById('consigne-display');
+    const statusBadge = document.getElementById('production-status');
+    const lineTitleEl = document.getElementById('line-title');
+    const statusTitleEl = document.getElementById('avancement-status-title');
+
+    const kpiTargetEl = document.getElementById('kpi-target');
+    const kpiDoneEl = document.getElementById('kpi-done');
+    const kpiTodoEl = document.getElementById('kpi-todo');
+    const progressFillEl = document.getElementById('progress-fill');
+
+    // === ANTI-MISE EN VEILLE (SCREEN WAKE LOCK API) ===
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.warn("Screen Wake Lock impossible :", err);
+      }
+    }
+
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    });
+
+    window.addEventListener('load', requestWakeLock);
+    document.addEventListener('click', requestWakeLock);
+
+    // === SAUVEGARDE LOCALSTORAGE ===
+    function saveState() {
+      const state = {
+        title: lineTitleEl.textContent,
+        targetMinutes: targetMinutes,
+        totalSeconds: totalSeconds,
+        isManualPaused: isManualPaused,
+        weeklyTarget: weeklyTarget,
+        weeklyDone: weeklyDone,
+        mStart: mStart,
+        mEnd: mEnd,
+        aStart: aStart,
+        aEnd: aEnd,
+        consigne: consigneEl.textContent
+      };
+      localStorage.setItem('triganoDataV7', JSON.stringify(state));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem('triganoDataV7');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (state.title) lineTitleEl.textContent = state.title;
+          if (state.consigne) consigneEl.textContent = state.consigne;
+          if (state.targetMinutes !== undefined) {
+            targetMinutes = state.targetMinutes;
+            objectiveLabelEl.textContent = `Objectif de cycle : ${targetMinutes} minutes`;
+          }
+          if (state.totalSeconds !== undefined) totalSeconds = state.totalSeconds;
+          if (state.weeklyTarget !== undefined) weeklyTarget = state.weeklyTarget;
+          if (state.weeklyDone !== undefined) weeklyDone = state.weeklyDone;
+          if (state.mStart) mStart = state.mStart;
+          if (state.mEnd) mEnd = state.mEnd;
+          if (state.aStart) aStart = state.aStart;
+          if (state.aEnd) aEnd = state.aEnd;
+
+          if (state.isManualPaused) {
+            isManualPaused = true;
+            pauseBtn.textContent = "Reprendre";
+            pauseBtn.style.backgroundColor = "#22c55e";
+            countdownEl.classList.add('paused');
+          }
+        } catch (e) {
+          console.error("Erreur de chargement des données :", e);
+        }
+      }
+    }
+
+    function updateWeeklyKPIs() {
+      kpiTargetEl.textContent = weeklyTarget;
+      kpiDoneEl.textContent = weeklyDone;
+      const todo = Math.max(0, weeklyTarget - weeklyDone);
+      kpiTodoEl.textContent = todo;
+
+      const pct = weeklyTarget > 0 ? Math.min(100, (weeklyDone / weeklyTarget) * 100) : 0;
+      progressFillEl.style.width = `${pct}%`;
+    }
+
+    // REMISE À ZÉRO SEMAINE
+    function resetWeeklyCounter() {
+      if (confirm("Remettre à zéro le nombre de mobil-homes réalisés pour la semaine ?")) {
+        weeklyDone = 0;
+        updateWeeklyKPIs();
+        resetCycle();
+        saveState();
+      }
+    }
+
+    function playAlarmSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        const beeps = [0, 0.25, 0.5];
+        beeps.forEach(delay => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
+          
+          gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+          gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + delay + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(ctx.currentTime + delay);
+          osc.stop(ctx.currentTime + delay + 0.2);
+        });
+      } catch (e) {
+        console.error("Erreur audio :", e);
+      }
+    }
+
+    function timeToMinutes(timeStr) {
+      const parts = timeStr.split(':');
+      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    }
+
+    function isShiftActive() {
+      const now = new Date();
+      const currentMin = now.getHours() * 60 + now.getMinutes();
+
+      const mStartMin = timeToMinutes(mStart);
+      const mEndMin = timeToMinutes(mEnd);
+      const aStartMin = timeToMinutes(aStart);
+      const aEndMin = timeToMinutes(aEnd);
+
+      const isMorning = currentMin >= mStartMin && currentMin < mEndMin;
+      const isAfternoon = currentMin >= aStartMin && currentMin < aEndMin;
+
+      return isMorning || isAfternoon;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock-time').textContent = `${hrs}:${mins}:${secs}`;
+      document.getElementById('clock-date').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+
+    function formatTime(seconds) {
+      const isNegative = seconds < 0;
+      const absSeconds = Math.abs(seconds);
+      const h = Math.floor(absSeconds / 3600);
+      const m = Math.floor((absSeconds % 3600) / 60);
+      const s = absSeconds % 60;
+      const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      return isNegative ? `-${timeStr}` : timeStr;
+    }
+
+    function updateCountdown() {
+      const shiftActive = isShiftActive();
+
+      if (!shiftActive) {
+        statusBadge.textContent = "HORS PRODUCTION / PAUSE";
+        statusBadge.className = "status-badge off";
+        statusTitleEl.textContent = "Ligne en pause ou hors shift :";
+        countdownEl.classList.add('off-shift');
+        saveState();
+        return;
+      }
+
+      statusBadge.textContent = "EN PRODUCTION";
+      statusBadge.className = "status-badge active";
+      countdownEl.classList.remove('off-shift');
+
+      if (!isManualPaused) {
+        totalSeconds--;
+        countdownEl.textContent = formatTime(totalSeconds);
+
+        if (totalSeconds < 0) {
+          statusTitleEl.textContent = "⚠️ Retard sur le cycle :";
+          countdownEl.style.color = "var(--trigano-red)";
+        } else {
+          statusTitleEl.textContent = "Prochain avancement dans :";
+          countdownEl.style.color = "#ffffff";
+        }
+
+        if (totalSeconds === 0 && !alarmPlayed) {
+          playAlarmSound();
+          alarmPlayed = true;
+        }
+      }
+      saveState();
+    }
+
+    function togglePause() {
+      isManualPaused = !isManualPaused;
+      if (isManualPaused) {
+        pauseBtn.textContent = "Reprendre";
+        pauseBtn.style.backgroundColor = "#22c55e";
+        countdownEl.classList.add('paused');
+      } else {
+        pauseBtn.textContent = "Pause";
+        pauseBtn.style.backgroundColor = "var(--accent-orange)";
+        countdownEl.classList.remove('paused');
+      }
+      saveState();
+    }
+
+    function resetCycle() {
+      totalSeconds = targetMinutes * 60;
+      countdownEl.textContent = formatTime(totalSeconds);
+      countdownEl.style.color = "#ffffff";
+      statusTitleEl.textContent = "Prochain avancement dans :";
+      alarmPlayed = false;
+      saveState();
+    }
+
+    function manualResetCycle() {
+      weeklyDone++;
+      updateWeeklyKPIs();
+      resetCycle();
+      if (isManualPaused) togglePause();
+    }
+
+    function openSettings() {
+      document.getElementById('input-title').value = lineTitleEl.textContent;
+      document.getElementById('input-weekly-target').value = weeklyTarget;
+      document.getElementById('input-weekly-done').value = weeklyDone;
+      document.getElementById('input-objective').value = targetMinutes;
+      document.getElementById('input-m-start').value = mStart;
+      document.getElementById('input-m-end').value = mEnd;
+      document.getElementById('input-a-start').value = aStart;
+      document.getElementById('input-a-end').value = aEnd;
+      document.getElementById('input-consigne').value = consigneEl.textContent;
+      document.getElementById('settings-modal').style.display = 'flex';
+    }
+
+    function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+
+    function saveSettings() {
+      const newTitle = document.getElementById('input-title').value;
+      const newWeeklyTarget = parseInt(document.getElementById('input-weekly-target').value, 10);
+      const newWeeklyDone = parseInt(document.getElementById('input-weekly-done').value, 10);
+      const newObj = parseInt(document.getElementById('input-objective').value, 10);
+      
+      mStart = document.getElementById('input-m-start').value;
+      mEnd = document.getElementById('input-m-end').value;
+      aStart = document.getElementById('input-a-start').value;
+      aEnd = document.getElementById('input-a-end').value;
+
+      const newConsigne = document.getElementById('input-consigne').value;
+
+      if (newTitle.trim() !== '') lineTitleEl.textContent = newTitle;
+
+      if (!isNaN(newWeeklyTarget) && newWeeklyTarget >= 0) weeklyTarget = newWeeklyTarget;
+      if (!isNaN(newWeeklyDone) && newWeeklyDone >= 0) weeklyDone = newWeeklyDone;
+      updateWeeklyKPIs();
+
+      if (!isNaN(newObj) && newObj > 0) {
+        if (targetMinutes !== newObj) {
+            targetMinutes = newObj;
+            totalSeconds = targetMinutes * 60;
+        }
+        objectiveLabelEl.textContent = `Objectif de cycle : ${targetMinutes} minutes`;
+        countdownEl.textContent = formatTime(totalSeconds);
+      }
+
+      if (newConsigne.trim() !== '') consigneEl.textContent = newConsigne;
+      
+      saveState();
+      closeSettings();
+    }
+
+    loadState();
+    updateClock();
+    updateWeeklyKPIs();
+    countdownEl.textContent = formatTime(totalSeconds);
+    
+    setInterval(updateClock, 1000);
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
