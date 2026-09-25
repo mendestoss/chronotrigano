@@ -18,16 +18,29 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-white); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; user-select: none; }
+    body { background-color: var(--bg-dark); color: var(--text-white); height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; user-select: none; transition: background-color 0.3s ease; position: relative; z-index: 1; }
+
+    /* ANIMATION FLASH ALARME */
+    @keyframes flashAlert {
+      0%, 100% { background-color: var(--bg-dark); }
+      50% { background-color: rgba(227, 6, 19, 0.3); }
+    }
+    .flash-active {
+      animation: flashAlert 1.5s infinite;
+    }
 
     /* HEADER GRAND FORMAT */
     header { background-color: #060910; padding: 1.5vh 2vw; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5vh solid var(--trigano-red); }
-    .brand { display: flex; align-items: center; gap: 1.5vw; }
+    .brand { display: flex; align-items: center; gap: 1.2vw; }
     .logo-box { background-color: var(--trigano-red); color: white; font-weight: 900; font-size: 3vh; padding: 0.8vh 1.5vw; border-radius: 0.5vh; letter-spacing: 0.2vw; }
-    .site-title { font-size: 3.5vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
-    .status-badge { background: #1e293b; padding: 1vh 1.5vw; border-radius: 3vh; font-size: 2.5vh; font-weight: 700; border: 0.2vh solid var(--border-dark); }
+    .site-title { font-size: 3.2vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+    .status-badge { background: #1e293b; padding: 1vh 1.2vw; border-radius: 3vh; font-size: 2.2vh; font-weight: 700; border: 0.2vh solid var(--border-dark); }
     .status-badge.active { color: var(--accent-green); border-color: var(--accent-green); }
     .status-badge.off { color: var(--accent-orange); border-color: var(--accent-orange); }
+    
+    /* BADGE ANTI-VEILLE */
+    .antiveille-badge { background: #1e293b; padding: 1vh 1.2vw; border-radius: 3vh; font-size: 2vh; font-weight: 700; border: 0.2vh solid var(--accent-orange); color: var(--accent-orange); cursor: pointer; transition: all 0.3s ease; }
+    .antiveille-badge.active { border-color: var(--accent-green); color: var(--accent-green); background: rgba(16, 185, 129, 0.1); }
 
     .gear-btn { background: transparent; border: 0.2vh solid var(--border-dark); color: var(--text-gray); font-size: 4vh; padding: 1vh 1.5vw; border-radius: 1vh; cursor: pointer; }
     .gear-btn:hover { color: white; border-color: var(--trigano-red); background: var(--card-dark); }
@@ -37,7 +50,7 @@
     .title-avancement { font-size: 4vh; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.1vw; margin-bottom: 1vh; }
     
     .timer-display { 
-      font-size: min(35vh, 18vw); /* S'adapte parfaitement à l'écran sans déborder */
+      font-size: min(35vh, 18vw); 
       font-weight: 900; 
       font-family: 'Courier New', monospace; 
       letter-spacing: -0.5vw; 
@@ -52,14 +65,14 @@
     .objective-text { font-size: 3.5vh; font-weight: 700; margin-bottom: 3vh; color: var(--text-gray); }
 
     .action-buttons { display: flex; gap: 2vw; }
-    .btn { padding: 1.5vh 2.5vw; font-size: 2.8vh; font-weight: 700; border-radius: 1vh; cursor: pointer; border: none; }
+    .btn { padding: 1.5vh 2.5vw; font-size: 2.8vh; font-weight: 700; border-radius: 1vh; cursor: pointer; border: none; z-index: 10; }
     .btn-pause { background-color: var(--accent-orange); color: #000; }
-    .btn-cycle { background-color: transparent; color: white; border: 0.3vh solid var(--trigano-red); }
+    .btn-cycle { background-color: rgba(0,0,0,0.5); color: white; border: 0.3vh solid var(--trigano-red); }
     .btn-cycle:hover { background-color: var(--trigano-red); box-shadow: 0 0 3vh rgba(227, 6, 19, 0.5); }
     .btn-reset-week { background-color: #334155; color: white; border: 0.2vh solid var(--border-dark); }
     .btn-reset-week:hover { background-color: #475569; border-color: var(--text-gray); }
 
-    /* PIED DE PAGE (KPIS ET CONSIGNES) AGRANDIS */
+    /* PIED DE PAGE */
     footer { display: grid; grid-template-columns: 1fr 2.6fr 1fr; gap: 1.5vw; padding: 2vh 2vw; background-color: #060910; border-top: 0.2vh solid var(--border-dark); }
     .panel { background-color: var(--card-dark); border: 0.2vh solid var(--border-dark); border-left: 0.8vh solid var(--trigano-red); border-radius: 1.5vh; padding: 1.5vh 2vw; display: flex; flex-direction: column; justify-content: center; }
     .panel-title { font-size: 2vh; font-weight: 800; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.1vw; margin-bottom: 0.5vh; }
@@ -80,7 +93,7 @@
     .progress-bar-container { width: 100%; background: var(--bg-dark); height: 3vh; border-radius: 1.5vh; margin-top: 1.5vh; overflow: hidden; border: 0.2vh solid var(--border-dark); }
     .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--trigano-red), var(--accent-green)); width: 0%; transition: width 0.4s ease; }
 
-    /* MODAL DE PARAMÈTRES (Aussi agrandie pour la lisibilité sur TV) */
+    /* MODAL DE PARAMÈTRES */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
     .modal { background: var(--card-dark); border: 0.3vh solid var(--trigano-red); padding: 4vh 3vw; border-radius: 1.5vh; width: 60vw; max-width: 900px; max-height: 90vh; overflow-y: auto; }
     .modal h2 { margin-bottom: 3vh; border-bottom: 0.2vh solid var(--border-dark); padding-bottom: 1.5vh; font-size: 3.5vh; }
@@ -91,15 +104,25 @@
     .modal-buttons { display: flex; justify-content: flex-end; gap: 1.5vw; margin-top: 4vh; }
     .btn-save { background: var(--trigano-red); color: white; border: none; padding: 1.5vh 3vw; border-radius: 1vh; cursor: pointer; font-weight: 700; font-size: 2.5vh; }
     .btn-cancel { background: transparent; color: var(--text-gray); border: 0.2vh solid var(--border-dark); padding: 1.5vh 3vw; border-radius: 1vh; cursor: pointer; font-size: 2.5vh; }
+    
+    /* VIDEO CACHÉE POUR LA TÉLÉ (Z-INDEX NÉGATIF) */
+    #keep-alive-video {
+      position: fixed; top: 50%; left: 50%; width: 100px; height: 100px;
+      z-index: -999; opacity: 0.05; pointer-events: none;
+    }
   </style>
 </head>
 <body>
+
+  <!-- ÉLÉMENT VIDÉO AUTO-GÉNÉRÉ SANS LIEN EXTERNE (Optimisé Smart TV) -->
+  <video id="keep-alive-video" loop muted playsinline></video>
 
   <header>
     <div class="brand">
       <div class="logo-box">TRIGANO</div>
       <div class="site-title" id="line-title">Ligne 6 — Trigano MDC</div>
       <div class="status-badge active" id="production-status">EN PRODUCTION</div>
+      <div class="antiveille-badge" id="antiveille-status" onclick="activateNoSleep()">⚠️ Anti-veille : CLIQUER ICI</div>
     </div>
     <button class="gear-btn" onclick="openSettings()" title="Paramètres">⚙</button>
   </header>
@@ -153,55 +176,24 @@
   <div class="modal-overlay" id="settings-modal">
     <div class="modal">
       <h2>⚙️ Configuration Ligne & Production</h2>
-      
       <div class="form-group">
         <label for="input-title">Nom de la Ligne / Titre</label>
         <input type="text" id="input-title" value="Ligne 6 — Trigano MDC">
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label for="input-weekly-target">Objectif Semaine (Nombre de Mobils)</label>
-          <input type="number" id="input-weekly-target" value="20" min="0">
-        </div>
-        <div class="form-group">
-          <label for="input-weekly-done">Déjà Réalisés cette semaine</label>
-          <input type="number" id="input-weekly-done" value="0" min="0">
-        </div>
+        <div class="form-group"><label for="input-weekly-target">Objectif Semaine (Mobils)</label><input type="number" id="input-weekly-target" value="20" min="0"></div>
+        <div class="form-group"><label for="input-weekly-done">Déjà Réalisés cette semaine</label><input type="number" id="input-weekly-done" value="0" min="0"></div>
       </div>
-
-      <div class="form-group">
-        <label for="input-objective">Objectif Temps de Cycle (en minutes)</label>
-        <input type="number" id="input-objective" value="210" min="1">
-      </div>
-
+      <div class="form-group"><label for="input-objective">Objectif Temps de Cycle (en minutes)</label><input type="number" id="input-objective" value="210" min="1"></div>
       <div class="form-row">
-        <div class="form-group">
-          <label for="input-m-start">Début Matin</label>
-          <input type="time" id="input-m-start" value="07:30">
-        </div>
-        <div class="form-group">
-          <label for="input-m-end">Fin Matin (Pause Midi)</label>
-          <input type="time" id="input-m-end" value="12:00">
-        </div>
+        <div class="form-group"><label for="input-m-start">Début Matin</label><input type="time" id="input-m-start" value="07:30"></div>
+        <div class="form-group"><label for="input-m-end">Fin Matin (Pause Midi)</label><input type="time" id="input-m-end" value="12:00"></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label for="input-a-start">Reprise Après-midi</label>
-          <input type="time" id="input-a-start" value="13:00">
-        </div>
-        <div class="form-group">
-          <label for="input-a-end">Fin Après-midi (Fin Shift)</label>
-          <input type="time" id="input-a-end" value="17:00">
-        </div>
+        <div class="form-group"><label for="input-a-start">Reprise Après-midi</label><input type="time" id="input-a-start" value="13:00"></div>
+        <div class="form-group"><label for="input-a-end">Fin Après-midi (Fin Shift)</label><input type="time" id="input-a-end" value="17:00"></div>
       </div>
-
-      <div class="form-group">
-        <label for="input-consigne">Consigne / Message défilant</label>
-        <input type="text" id="input-consigne" value="Merci de porter vos EPI">
-      </div>
-
+      <div class="form-group"><label for="input-consigne">Consigne / Message défilant</label><input type="text" id="input-consigne" value="Merci de porter vos EPI"></div>
       <div class="modal-buttons">
         <button class="btn-cancel" onclick="closeSettings()">Annuler</button>
         <button class="btn-save" onclick="saveSettings()">Enregistrer</button>
@@ -235,9 +227,14 @@
     const kpiDoneEl = document.getElementById('kpi-done');
     const kpiTodoEl = document.getElementById('kpi-todo');
     const progressFillEl = document.getElementById('progress-fill');
+    const antiveilleBadge = document.getElementById('antiveille-status');
 
-    // === ANTI-MISE EN VEILLE (SCREEN WAKE LOCK API) ===
+    // ==========================================================
+    // MOTEUR ANTI-VEILLE SPÉCIAL SMART TV
+    // ==========================================================
     let wakeLock = null;
+    let audioCtxKeepAlive = null;
+    let isAntiVeilleActive = false;
 
     async function requestWakeLock() {
       try {
@@ -245,20 +242,81 @@
           wakeLock = await navigator.wakeLock.request('screen');
         }
       } catch (err) {
-        console.warn("Screen Wake Lock impossible :", err);
+        console.warn("Wake Lock non supporté :", err);
       }
     }
 
-    document.addEventListener('visibilitychange', async () => {
-      if (wakeLock !== null && document.visibilityState === 'visible') {
-        await requestWakeLock();
+    // Création d'une "vraie" vidéo en mouvement pour tromper la TV
+    const videoEl = document.getElementById('keep-alive-video');
+    const canvasStream = document.createElement('canvas');
+    canvasStream.width = 100;
+    canvasStream.height = 100;
+    const ctxStream = canvasStream.getContext('2d');
+    
+    let pos = 0;
+    function drawCanvasFrame() {
+      // Fond noir
+      ctxStream.fillStyle = '#000';
+      ctxStream.fillRect(0, 0, 100, 100);
+      // Carré blanc qui bouge (force la télé à décoder la vidéo)
+      ctxStream.fillStyle = '#fff';
+      ctxStream.fillRect(pos, 40, 20, 20);
+      pos = (pos + 2) % 100;
+      
+      requestAnimationFrame(drawCanvasFrame);
+    }
+    drawCanvasFrame();
+
+    if (canvasStream.captureStream) {
+      videoEl.srcObject = canvasStream.captureStream(30); // 30 images par seconde
+    }
+
+    function startSilentAudio() {
+      try {
+        if (!audioCtxKeepAlive) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            audioCtxKeepAlive = new AudioContext();
+            const osc = audioCtxKeepAlive.createOscillator();
+            const gain = audioCtxKeepAlive.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(10, audioCtxKeepAlive.currentTime); // Inaudible
+            gain.gain.setValueAtTime(0.001, audioCtxKeepAlive.currentTime);
+            osc.connect(gain);
+            gain.connect(audioCtxKeepAlive.destination);
+            osc.start();
+          }
+        } else if (audioCtxKeepAlive.state === 'suspended') {
+          audioCtxKeepAlive.resume();
+        }
+      } catch (e) {}
+    }
+
+    function activateNoSleep() {
+      requestWakeLock();
+      startSilentAudio();
+      
+      if (videoEl) {
+        videoEl.play().then(() => {
+          isAntiVeilleActive = true;
+          antiveilleBadge.textContent = "🛡️ Anti-veille : ACTIF";
+          antiveilleBadge.classList.add('active');
+        }).catch((err) => {
+          console.warn("Erreur vidéo :", err);
+        });
       }
-    });
+    }
 
-    window.addEventListener('load', requestWakeLock);
-    document.addEventListener('click', requestWakeLock);
+    // Force la relance de la vidéo si la télé la met en pause
+    setInterval(() => {
+      if (videoEl && videoEl.paused && isAntiVeilleActive) {
+        videoEl.play().catch(() => {});
+      }
+    }, 3000);
 
-    // === SAUVEGARDE LOCALSTORAGE ===
+    // ==========================================================
+    // SAUVEGARDE & LOGIQUE APPLICATION
+    // ==========================================================
     function saveState() {
       const state = {
         title: lineTitleEl.textContent,
@@ -301,9 +359,7 @@
             pauseBtn.style.backgroundColor = "#22c55e";
             countdownEl.classList.add('paused');
           }
-        } catch (e) {
-          console.error("Erreur de chargement des données :", e);
-        }
+        } catch (e) {}
       }
     }
 
@@ -312,12 +368,10 @@
       kpiDoneEl.textContent = weeklyDone;
       const todo = Math.max(0, weeklyTarget - weeklyDone);
       kpiTodoEl.textContent = todo;
-
       const pct = weeklyTarget > 0 ? Math.min(100, (weeklyDone / weeklyTarget) * 100) : 0;
       progressFillEl.style.width = `${pct}%`;
     }
 
-    // REMISE À ZÉRO SEMAINE
     function resetWeeklyCounter() {
       if (confirm("Remettre à zéro le nombre de mobil-homes réalisés pour la semaine ?")) {
         weeklyDone = 0;
@@ -327,35 +381,41 @@
       }
     }
 
-    function playAlarmSound() {
+    // ==========================================================
+    // SYSTÈME D'ALARME INDUSTRIELLE (Unique)
+    // ==========================================================
+    function playBuzzer() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(350, ctx.currentTime); 
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(1, ctx.currentTime + 0.8);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
 
-        const beeps = [0, 0.25, 0.5];
-        beeps.forEach(delay => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(880, ctx.currentTime + delay);
-          
-          gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-          gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + delay + 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.2);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(ctx.currentTime + delay);
-          osc.stop(ctx.currentTime + delay + 0.2);
-        });
-      } catch (e) {
-        console.error("Erreur audio :", e);
-      }
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 1.1);
+      } catch (e) {}
     }
 
+    function triggerAlarmAlert() {
+      playBuzzer(); // Une seule fois
+      document.body.classList.add('flash-active');
+    }
+
+    function stopAlarmAlert() {
+      document.body.classList.remove('flash-active');
+    }
+
+    // ==========================================================
     function timeToMinutes(timeStr) {
       const parts = timeStr.split(':');
       return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
@@ -364,16 +424,11 @@
     function isShiftActive() {
       const now = new Date();
       const currentMin = now.getHours() * 60 + now.getMinutes();
-
       const mStartMin = timeToMinutes(mStart);
       const mEndMin = timeToMinutes(mEnd);
       const aStartMin = timeToMinutes(aStart);
       const aEndMin = timeToMinutes(aEnd);
-
-      const isMorning = currentMin >= mStartMin && currentMin < mEndMin;
-      const isAfternoon = currentMin >= aStartMin && currentMin < aEndMin;
-
-      return isMorning || isAfternoon;
+      return (currentMin >= mStartMin && currentMin < mEndMin) || (currentMin >= aStartMin && currentMin < aEndMin);
     }
 
     function updateClock() {
@@ -416,7 +471,7 @@
         countdownEl.textContent = formatTime(totalSeconds);
 
         if (totalSeconds < 0) {
-          statusTitleEl.textContent = "⚠️ Retard sur le cycle :";
+          statusTitleEl.textContent = "⚠️ IL EST L'HEURE DE POUSSER :";
           countdownEl.style.color = "var(--trigano-red)";
         } else {
           statusTitleEl.textContent = "Prochain avancement dans :";
@@ -424,7 +479,7 @@
         }
 
         if (totalSeconds === 0 && !alarmPlayed) {
-          playAlarmSound();
+          triggerAlarmAlert();
           alarmPlayed = true;
         }
       }
@@ -451,6 +506,7 @@
       countdownEl.style.color = "#ffffff";
       statusTitleEl.textContent = "Prochain avancement dans :";
       alarmPlayed = false;
+      stopAlarmAlert();
       saveState();
     }
 
@@ -486,11 +542,9 @@
       mEnd = document.getElementById('input-m-end').value;
       aStart = document.getElementById('input-a-start').value;
       aEnd = document.getElementById('input-a-end').value;
-
       const newConsigne = document.getElementById('input-consigne').value;
 
       if (newTitle.trim() !== '') lineTitleEl.textContent = newTitle;
-
       if (!isNaN(newWeeklyTarget) && newWeeklyTarget >= 0) weeklyTarget = newWeeklyTarget;
       if (!isNaN(newWeeklyDone) && newWeeklyDone >= 0) weeklyDone = newWeeklyDone;
       updateWeeklyKPIs();
@@ -503,7 +557,6 @@
         objectiveLabelEl.textContent = `Objectif de cycle : ${targetMinutes} minutes`;
         countdownEl.textContent = formatTime(totalSeconds);
       }
-
       if (newConsigne.trim() !== '') consigneEl.textContent = newConsigne;
       
       saveState();
