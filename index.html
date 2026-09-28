@@ -570,6 +570,17 @@
     
     setInterval(updateClock, 1000);
     setInterval(updateCountdown, 1000);
+
+    // ==========================================================
+    // CONTOURNEMENT VEILLE MATÉRIELLE TV (15 MIN)
+    // ==========================================================
+    // Recharge la page automatiquement toutes les 14 minutes (840 000 ms)
+    // Cela remet à zéro le compteur de veille interne de la télévision.
+    // Aucune donnée n'est perdue grâce au localStorage.
+    setInterval(() => {
+      window.location.reload();
+    }, 1 * 60 * 1000);
   </script>
 </body>
 </html>
+
